@@ -4,6 +4,8 @@
 
 ## 在线使用
 
+[打开计算器](https://blockbloomer.github.io/Marginal-APR-Calculator/)
+
 仓库附带 GitHub Pages 发布工作流。启用 Pages 的 GitHub Actions 发布来源后，每次推送 `main` 都会先测试、再构建和发布。
 
 页面不要求连接钱包或登录；所有计算在访问者的浏览器内完成，参数不会上传。
@@ -13,8 +15,8 @@
 需要 Node.js 20 或更高版本，没有第三方依赖，无需安装 npm 包。
 
 ```bash
-git clone https://github.com/blockbloomer/lp-marginal-apr-calculator.git
-cd lp-marginal-apr-calculator
+git clone https://github.com/blockbloomer/Marginal-APR-Calculator.git
+cd Marginal-APR-Calculator
 npm run dev
 ```
 
