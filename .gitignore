@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+dist/
+build/
+.next/
+.DS_Store
+.sites-runtime/
+.impeccable/review/
+*.log

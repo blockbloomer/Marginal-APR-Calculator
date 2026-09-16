@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fa">
+  <meta name="description" content="用现有本金、active 份额和手续费 APR，计算同区间追加资金的边际手续费年化。">
+  <title>LP 边际年化计算器</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232859d9'/%3E%3Cpath d='M7 25V8M7 25H26M9 22Q13 11 25 10' stroke='white' stroke-width='2.4' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="page-header">
+      <div><h1>LP 边际年化</h1><p>同一区间再加一笔，这笔钱能多赚多少。</p></div>
+      <span class="header-note">浏览器内计算 · 手续费 APR</span>
+    </header>
+
+    <div class="mobile-result" aria-label="本次加仓年化摘要"><span>本次加仓手续费 APR</span><output id="mobile-apr">13.33%</output></div>
+    <div class="workspace">
+      <form id="calculator-form" class="input-panel" novalidate>
+        <div class="section-heading"><h2>现有仓位</h2><span id="input-state" class="subtle">当前为示例参数</span></div>
+        <div class="field">
+          <label for="capital">已投入本金</label>
+          <div class="number-field"><input id="capital" name="capital" type="number" min="0.000001" max="1000000000000" step="any" inputmode="decimal" value="2000" required aria-describedby="capital-error"><span>U</span></div>
+          <p id="capital-error" class="field-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="activePercent">当前 Active 份额</label>
+          <div class="number-field"><input id="activePercent" name="activePercent" type="number" min="0.00000001" max="100" step="any" inputmode="decimal" value="70" required aria-describedby="active-hint activePercent-error"><span>%</span></div>
+          <p id="active-hint" class="field-hint">当前成交价附近，你占活跃流动性的份额。</p>
+          <p id="activePercent-error" class="field-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="aprPercent">现有仓位手续费年化</label>
+          <div class="number-field"><input id="aprPercent" name="aprPercent" type="number" min="0" max="1000000" step="any" inputmode="decimal" value="60" required aria-describedby="apr-hint aprPercent-error"><span>%</span></div>
+          <p id="apr-hint" class="field-hint">填自己仓位的手续费 APR，支持高年化。APY 不能直接代入。</p>
+          <p id="aprPercent-error" class="field-error" hidden></p>
+        </div>
+        <section class="addition-section" aria-labelledby="addition-title">
+          <h2 id="addition-title">准备追加</h2>
+          <div class="field">
+            <label for="additional">追加本金</label>
+            <div class="number-field addition-field"><input id="additional" name="additional" type="number" min="0" max="1000000000000" step="any" inputmode="decimal" value="1000" required aria-describedby="additional-error"><span>U</span></div>
+            <p id="additional-error" class="field-error" hidden></p>
+          </div>
+          <label class="sr-only" for="additional-slider">拖动调整追加本金</label>
+          <input id="additional-slider" class="amount-slider" type="range" min="0" max="6000" step="any" value="1000" aria-describedby="slider-hint">
+          <div class="slider-scale"><span>0 U</span><span id="slider-end">6,000 U</span></div>
+          <p id="slider-hint" class="field-hint">拖动看年化变化，也可以直接输入精确金额。</p>
+        </section>
+      </form>
+
+      <section class="output-panel" aria-label="加仓计算结果">
+        <div id="invalid-state" class="invalid-state" role="status" hidden>
+          <h2>补全有效参数后计算</h2><p>检查标出的输入项，结果会自动更新。</p>
+        </div>
+        <div id="valid-results">
+          <section class="primary-result" aria-live="polite" aria-atomic="true">
+            <h2>这次追加资金的手续费年化</h2>
+            <div class="apr-result"><output id="increment-apr">13.33</output><span id="apr-suffix">% <small>APR</small></span></div>
+            <p id="result-sentence" class="result-sentence">追加 1,000 U，模型折算每年多赚 133.33 U 手续费。</p>
+            <p class="result-boundary">仅为手续费单利年化估算，未扣持仓盈亏、gas 与调仓成本。</p>
+          </section>
+          <dl class="result-facts">
+            <div><dt>追加后 Active</dt><dd id="active-after">77.78<span>%</span></dd></div>
+            <div><dt>每天多赚手续费</dt><dd id="extra-daily">0.3653<span>U</span></dd></div>
+            <div><dt>再加一小笔的年化</dt><dd id="instant-after">9.88<span>%</span></dd></div>
+          </dl>
+
+          <section class="chart-section" aria-labelledby="chart-title">
+            <div class="chart-heading"><h2 id="chart-title">追加金额与新增年化</h2><span class="subtle">整笔追加的平均效率</span></div>
+            <div id="chart-container"><svg id="apr-chart" role="img" aria-labelledby="chart-description"></svg></div>
+            <p id="chart-description" class="chart-description">每个点表示：从原仓位出发，追加该金额时，整笔新增资金能获得的手续费 APR。0 处为小额加仓极限。</p>
+          </section>
+
+          <details class="breakdown">
+            <summary>查看加仓前后账本</summary>
+            <div class="table-wrap"><table>
+              <caption class="sr-only">同一手续费规模下，加仓前后的整体仓位比较</caption>
+              <thead><tr><th scope="col">指标</th><th scope="col">加仓前</th><th scope="col">加仓后</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">本金</th><td id="table-capital-before"></td><td id="table-capital-after"></td></tr>
+                <tr><th scope="row">Active 份额</th><td id="table-active-before"></td><td id="table-active-after"></td></tr>
+                <tr><th scope="row">整体手续费 APR</th><td id="table-apr-before"></td><td id="table-apr-after"></td></tr>
+                <tr><th scope="row">模型年手续费</th><td id="table-fees-before"></td><td id="table-fees-after"></td></tr>
+              </tbody>
+            </table></div>
+            <p class="field-hint">新增本金也会稀释老仓位的手续费份额。这里计算整个仓位多赚的部分。</p>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <details class="method-panel">
+      <summary>计算口径与公式</summary>
+      <div class="method-content">
+        <div><h2>用在什么情况下</h2><p>保持相同价格区间、相同布仓比例，并假设其他 LP 和可分配手续费规模不变。Active 必须是当前成交处的活跃流动性份额，不能直接使用全池 TVL 占比。</p><p>入场后的份额会随价格和其他 LP 改变；增加深度也可能改变成交量。这是加仓前的静态估算，不代表未来一年必然实现。</p></div>
+        <div><h2>怎么算</h2><p>整笔新增年化 = 加仓前整体手续费 APR ×（1 − 加仓后 Active 份额）。</p><p>新增年手续费 = 追加本金 × 整笔新增年化。页面中的“再加一小笔”是加仓完成后的瞬时边际，通常比这次整笔追加的年化更低。</p><p>仅有本金和份额，无法推算手续费年化；还需要当前仓位的手续费 APR。追加 0 U 时没有整笔新增年化。</p></div>
+      </div>
+    </details>
+    <footer>所有计算在本机浏览器完成。输入不会上传，也不会保存。</footer>
+  </main>
+  <noscript>请启用浏览器 JavaScript 以使用本地计算器。</noscript>
+</body>
+</html>
