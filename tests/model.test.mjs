@@ -13,6 +13,7 @@ test('the 2000 to 3000 example distinguishes finite, average and instantaneous A
   close(r.instantAprAfter, 9.87654320987654);
   close(r.extraAnnualFees, 133.33333333333333);
   close(r.extraDailyFees * 365, r.extraAnnualFees);
+  close(r.extraHourlyFees * 24, r.extraDailyFees);
 });
 
 test('annual fee conservation agrees with the independent liquidity-share model', () => {

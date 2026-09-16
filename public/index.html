@@ -60,12 +60,12 @@
           <section class="primary-result" aria-live="polite" aria-atomic="true">
             <h2>这次追加资金的手续费年化</h2>
             <div class="apr-result"><output id="increment-apr">13.33</output><span id="apr-suffix">% <small>APR</small></span></div>
-            <p id="result-sentence" class="result-sentence">追加 1,000 U，模型折算每年多赚 133.33 U 手续费。</p>
+            <p id="result-sentence" class="result-sentence">追加 1,000 U，模型折算每天多赚 0.3653 U 手续费。</p>
             <p class="result-boundary">仅为手续费单利年化估算，未扣持仓盈亏、gas 与调仓成本。</p>
           </section>
           <dl class="result-facts">
             <div><dt>追加后 Active</dt><dd id="active-after">77.78<span>%</span></dd></div>
-            <div><dt>每天多赚手续费</dt><dd id="extra-daily">0.3653<span>U</span></dd></div>
+            <div><dt>每小时多赚手续费</dt><dd id="extra-hourly">0.0152<span>U</span></dd></div>
             <div><dt>再加一小笔的年化</dt><dd id="instant-after">9.88<span>%</span></dd></div>
           </dl>
 
@@ -97,7 +97,7 @@
       <summary>计算口径与公式</summary>
       <div class="method-content">
         <div><h2>用在什么情况下</h2><p>保持相同价格区间、相同布仓比例，并假设其他 LP 和可分配手续费规模不变。Active 必须是当前成交处的活跃流动性份额，不能直接使用全池 TVL 占比。</p><p>入场后的份额会随价格和其他 LP 改变；增加深度也可能改变成交量。这是加仓前的静态估算，不代表未来一年必然实现。</p></div>
-        <div><h2>怎么算</h2><p>整笔新增年化 = 加仓前整体手续费 APR ×（1 − 加仓后 Active 份额）。</p><p>新增年手续费 = 追加本金 × 整笔新增年化。页面中的“再加一小笔”是加仓完成后的瞬时边际，通常比这次整笔追加的年化更低。</p><p>仅有本金和份额，无法推算手续费年化；还需要当前仓位的手续费 APR。追加 0 U 时没有整笔新增年化。</p></div>
+        <div><h2>怎么算</h2><p>整笔新增年化 = 加仓前整体手续费 APR ×（1 − 加仓后 Active 份额）。</p><p>新增年手续费 = 追加本金 × 整笔新增年化。每天按年手续费 ÷ 365 折算，每小时再 ÷ 24。页面中的“再加一小笔”是加仓完成后的瞬时边际，通常比这次整笔追加的年化更低。</p><p>仅有本金和份额，无法推算手续费年化；还需要当前仓位的手续费 APR。追加 0 U 时没有整笔新增年化。</p></div>
       </div>
     </details>
     <footer>所有计算在本机浏览器完成。输入不会上传，也不会保存。</footer>

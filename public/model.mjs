@@ -43,6 +43,7 @@ export function calculatePosition(input) {
     totalAnnualFeesAfter: annualFeesBefore + extraAnnualFees,
     extraAnnualFees,
     extraDailyFees: extraAnnualFees / 365,
+    extraHourlyFees: extraAnnualFees / 365 / 24,
     dilution,
   };
 }

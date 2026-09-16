@@ -61,9 +61,9 @@ function update(resizeSlider = false) {
   byId('apr-suffix').hidden = result.incrementApr === null;
   byId('result-sentence').textContent = result.incrementApr === null
     ? `输入追加金额，查看这笔钱的年化。当前小额加仓的年化约 ${percentage(result.instantAprBefore)}。`
-    : `追加 ${money(input.additional, 6)}，模型折算每年多赚 ${money(result.extraAnnualFees, 4)} 手续费。`;
+    : `追加 ${money(input.additional, 6)}，模型折算每天多赚 ${money(result.extraDailyFees, 4)} 手续费。`;
   setFact('active-after', number(result.activeAfter, 4), '%');
-  setFact('extra-daily', number(result.extraDailyFees, 4), 'U');
+  setFact('extra-hourly', number(result.extraHourlyFees, 4), 'U');
   setFact('instant-after', number(result.instantAprAfter), '%');
   const rows = {
     'capital-before': money(input.capital, 6),
