@@ -33,6 +33,10 @@ h2 { font-size: 1rem; font-weight: 600; }
 .page-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 32px 0 28px; }
 .page-header h1 { font-size: clamp(1.55rem, 2.5vw, 1.9rem); letter-spacing: -0.025em; font-weight: 650; }
 .page-header p { color: var(--muted); margin-top: 7px; font-size: 0.9375rem; }
+.header-meta { display: flex; flex-direction: column; align-items: flex-end; }
+.author-credit { display: flex; align-items: center; color: var(--muted); font-size: .8125rem; line-height: 1.6; }
+.author-credit a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue-dark); text-decoration: underline; text-underline-offset: 4px; }
+.author-credit a:hover { color: var(--ink); }
 .header-note, .subtle { color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
 .header-note { white-space: nowrap; }
 .mobile-result { display: none; }
@@ -127,9 +131,6 @@ thead { color: var(--muted); }
 .method-content p { color: var(--muted); font-size: .875rem; line-height: 1.9; max-width: 70ch; }
 .method-content p + p { margin-top: 10px; }
 footer { color: var(--muted); font-size: .75rem; line-height: 1.7; padding: 10px 0 30px; }
-.author-credit { margin-top: 8px; font-size: .8125rem; }
-.author-credit a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue-dark); text-decoration: underline; text-underline-offset: 4px; }
-.author-credit a:hover { color: var(--ink); }
 .invalid-state { min-height: 400px; padding-top: 44px; }
 .invalid-state p { color: var(--muted); font-size: .9375rem; margin-top: 12px; line-height: 1.8; }
 @media (max-width: 1000px) {
@@ -151,7 +152,7 @@ footer { color: var(--muted); font-size: .75rem; line-height: 1.7; padding: 10px
   .app-shell { width: calc(100% - 32px); }
   .page-header { padding: 23px 0; display: block; }
   .page-header h1 { font-size: 1.5rem; }
-  .header-note { display: block; margin-top: 10px; }
+  .header-meta { align-items: flex-start; margin-top: 10px; }
   .mobile-result { display: flex; position: sticky; top: 0; z-index: 2; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 0; margin-bottom: 14px; background: var(--canvas); border-bottom: 1px solid var(--line); }
   .mobile-result > span { color: var(--muted); font-size: .8125rem; }
   .mobile-result output { font-size: 1.35rem; font-weight: 600; color: var(--blue-dark); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
