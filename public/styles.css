@@ -127,6 +127,9 @@ thead { color: var(--muted); }
 .method-content p { color: var(--muted); font-size: .875rem; line-height: 1.9; max-width: 70ch; }
 .method-content p + p { margin-top: 10px; }
 footer { color: var(--muted); font-size: .75rem; line-height: 1.7; padding: 10px 0 30px; }
+.author-credit { margin-top: 8px; font-size: .8125rem; }
+.author-credit a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue-dark); text-decoration: underline; text-underline-offset: 4px; }
+.author-credit a:hover { color: var(--ink); }
 .invalid-state { min-height: 400px; padding-top: 44px; }
 .invalid-state p { color: var(--muted); font-size: .9375rem; margin-top: 12px; line-height: 1.8; }
 @media (max-width: 1000px) {
