@@ -3,12 +3,20 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs --dist",
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check public/app.mjs && node --check public/model.mjs && node --check scripts/serve.mjs && node --check scripts/build.mjs",
+    "check": "node --check public/app.mjs && node --check public/model.mjs && node --check public/positions.mjs && node --check public/import-position.mjs && node --check scripts/serve.mjs && node --check scripts/build.mjs",
     "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "viem": "^2.56.6"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }

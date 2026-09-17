@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T05:30:56.309972+00:00",
+  "title": "设计约定：LP 边际年化计算器",
+  "extensions": {
+    "shadows": [
+      {
+        "name": "input-focus",
+        "value": "0 0 0 3px #e4edff",
+        "purpose": "数值输入聚焦时标示活动边界。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "input-feedback",
+        "value": "border-color 140ms ease, box-shadow 140ms ease",
+        "purpose": "数值输入状态过渡；减少动态效果偏好下关闭。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-desktop",
+        "value": "1000px"
+      },
+      {
+        "name": "single-column",
+        "value": "730px"
+      },
+      {
+        "name": "small-phone",
+        "value": "370px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "主按钮",
+      "kind": "button",
+      "description": "读取操作使用实心蓝色，读取期间显示忙碌文字并禁用。",
+      "html": "<button class=\"ds-primary\">读取 Active</button>",
+      "css": ".ds-primary{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;min-height:44px;min-width:122px;padding:10px 18px;border:1px solid var(--blue,#2859d9);border-radius:7px;font-size:16px;font-weight:500;background:var(--blue,#2859d9);color:white;cursor:pointer}.ds-primary:hover{background:var(--blue-dark,#1b43b4);border-color:var(--blue-dark,#1b43b4)}.ds-primary:disabled{opacity:.65;cursor:wait}.ds-primary:focus-visible{outline:3px solid #8babff;outline-offset:4px;}"
+    },
+    {
+      "name": "次按钮",
+      "kind": "button",
+      "description": "恢复设置等辅助操作使用白底描边。",
+      "html": "<button class=\"ds-secondary\">恢复公共 RPC</button>",
+      "css": ".ds-secondary{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;min-height:44px;padding:10px 18px;border:1px solid #cfd8e7;border-radius:7px;background:white;color:var(--ink,#202b3d);font-size:16px;font-weight:500;white-space:nowrap;cursor:pointer}.ds-secondary:hover{background:var(--canvas,#f5f7fa)}.ds-secondary:focus-visible{outline:3px solid #8babff;outline-offset:4px;}"
+    },
+    {
+      "name": "文字按钮",
+      "kind": "button",
+      "description": "切换手动填写使用带下划线的轻量操作。",
+      "html": "<button class=\"ds-text\">改为手动填写</button>",
+      "css": ".ds-text{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;padding:8px 0;border:0;background:transparent;color:var(--blue-dark,#1b43b4);font-size:13px;text-decoration:underline;text-underline-offset:4px;white-space:nowrap;cursor:pointer}.ds-text:hover{color:var(--ink,#202b3d)}.ds-text:focus-visible{outline:3px solid #8babff;outline-offset:4px;}"
+    },
+    {
+      "name": "查询输入",
+      "kind": "input",
+      "description": "字段标签独立显示；占位文案仅提示格式。",
+      "html": "<label class=\"ds-lookup-label\" for=\"ds-position\">仓位链接或 NFT 编号</label><input class=\"ds-lookup-input\" id=\"ds-position\" placeholder=\"粘贴单个仓位详情链接，或输入编号\">",
+      "css": ".ds-lookup-label{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;display:block;font-size:13px;color:#3c485d;margin-bottom:7px}.ds-lookup-input{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;width:100%;min-width:0;min-height:44px;padding:10px 12px;color:var(--ink,#202b3d);background:white;border:1px solid #cfd8e7;border-radius:7px;font-size:16px}.ds-lookup-input::placeholder{color:var(--muted,#5d6a7e);opacity:1}.ds-lookup-input:focus{border-color:var(--blue,#2859d9)}.ds-lookup-input:focus-visible{outline:3px solid #8babff;outline-offset:4px;}"
+    },
+    {
+      "name": "带单位数值输入",
+      "kind": "input",
+      "description": "数字与单位分离，聚焦及错误状态落在共同边框。",
+      "html": "<label class=\"ds-number-label\" for=\"ds-capital\">已投入本金</label><div class=\"ds-number\"><input id=\"ds-capital\" type=\"number\" value=\"2000\"><span>U</span></div>",
+      "css": ".ds-number-label{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;display:block;color:#3c485d;font-size:14px;margin-bottom:8px;line-height:1.5}.ds-number{display:flex;align-items:center;border:1px solid #cfd8e7;border-radius:8px;overflow:hidden;transition:border-color 140ms ease,box-shadow 140ms ease}.ds-number:hover{border-color:#9fadc5}.ds-number:focus-within{border-color:var(--blue,#2859d9);box-shadow:0 0 0 3px #e4edff}.ds-number input{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;width:100%;min-width:0;padding:12px 0 12px 13px;border:none;color:var(--ink,#202b3d);background:transparent;font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;outline:none;appearance:textfield}.ds-number input::-webkit-outer-spin-button,.ds-number input::-webkit-inner-spin-button{appearance:none;margin:0}.ds-number>span{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;color:var(--muted,#5d6a7e);padding:0 14px 0 10px;font-size:14px}.ds-number:has([aria-invalid=\"true\"]){border-color:var(--error,#a32424)}@media(prefers-reduced-motion:reduce){.ds-number{transition:none}}"
+    },
+    {
+      "name": "面板与查询反馈",
+      "kind": "card",
+      "description": "白底、浅边框与细分隔线承载查询说明；状态同时提供文字与颜色。",
+      "html": "<section class=\"ds-panel\"><h2>不知道 Active？从链上读取</h2><p class=\"ds-panel-note\">可选 · 无需连接钱包</p><p class=\"ds-feedback\" role=\"status\">查询条件已改变，请重新读取，或手动填写 Active。</p></section>",
+      "css": ".ds-panel{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;padding:21px 25px 16px;background:var(--paper,#fff);border:1px solid var(--line,#e0e6ef);border-radius:14px;color:var(--ink,#202b3d)}.ds-panel h2{margin:0;font-size:16px;font-weight:600}.ds-panel-note{margin:10px 0 0;color:var(--muted,#5d6a7e);font-size:13px;line-height:1.6}.ds-feedback{margin:14px 0 0;padding-top:13px;border-top:1px solid var(--line,#e0e6ef);font-size:13px;line-height:1.75;overflow-wrap:anywhere}.ds-feedback[data-state=\"error\"]{color:var(--error,#a32424)}.ds-feedback[data-state=\"success\"]{color:var(--blue-dark,#1b43b4)}"
+    }
+  ],
+  "narrative": {
+    "overview": "本地即时计算工作台。围绕四项输入比较追加资金的手续费效率，首屏直接呈现核心 APR；账本与计算口径默认折叠。",
+    "rules": [],
+    "dos": [],
+    "donts": []
+  }
+}

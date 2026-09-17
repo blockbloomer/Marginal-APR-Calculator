@@ -11,12 +11,35 @@
   <script type="module" src="./app.mjs"></script>
 </head>
 <body>
+  <!-- THESIS: Read a position's current Active share, then compare the fee efficiency of adding capital.
+  OWN-WORLD: Extend the existing light workspace, blue controls, labeled inputs and thin dividers.
+  STORY: Choose platform, paste a position, read Active, enter matching capital and fee APR.
+  FIRST VIEWPORT: Compact optional import strip above the existing two-column calculator; RPC settings stay collapsed.
+  FORM: Local extension of the established operate surface; no new direction seed.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md -->
   <main class="app-shell">
     <header class="page-header">
       <div><h1>LP 边际年化</h1><p>同一区间再加一笔，这笔钱能多赚多少。</p></div>
       <span class="header-note">浏览器内计算 · 手续费 APR</span>
     </header>
 
+    <section class="lookup-panel" aria-labelledby="lookup-title">
+      <div class="lookup-heading"><h2 id="lookup-title">不知道 Active？从链上读取</h2><span class="subtle">可选 · 无需连接钱包</span></div>
+      <form id="position-form" novalidate autocomplete="off">
+        <div class="lookup-fields">
+          <div class="lookup-field"><label for="position-network">网络与平台</label><select id="position-network"></select></div>
+          <div class="lookup-field"><label for="position-id">仓位链接或 NFT 编号</label><input id="position-id" type="text" placeholder="粘贴单个仓位详情链接，或输入编号" spellcheck="false" autocapitalize="off" aria-describedby="lookup-hint"></div>
+          <button id="read-position" class="primary-button" type="submit">读取 Active</button>
+        </div>
+        <p id="lookup-hint" class="field-hint">支持 BSC 与 Robinhood 的指定平台。只读取这个 NFT 的份额，本金与手续费 APR 需填写同一仓位的数据。</p>
+        <details class="rpc-settings"><summary>RPC 设置 <span class="subtle">默认使用公共节点</span></summary>
+          <label for="custom-rpc">自定义 RPC（可选）</label>
+          <div class="rpc-input-row"><input id="custom-rpc" type="password" placeholder="https://…" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="rpc-hint"><button id="clear-rpc" class="secondary-button" type="button">恢复公共 RPC</button></div>
+          <p id="rpc-hint" class="field-hint">地址仅用于当前页面，刷新后清空。需支持 HTTPS 和浏览器跨域访问（CORS）；填写后只使用该节点，不自动切换公共节点。</p>
+        </details>
+      </form>
+      <div id="lookup-feedback" class="lookup-feedback" hidden><p id="lookup-status" role="status" aria-live="polite" aria-atomic="true"></p><button id="manual-active" class="text-button" type="button">改为手动填写</button></div>
+    </section>
     <div class="mobile-result" aria-label="本次加仓年化摘要"><span>本次加仓手续费 APR</span><output id="mobile-apr">13.33%</output></div>
     <div class="workspace">
       <form id="calculator-form" class="input-panel" novalidate>
@@ -29,7 +52,7 @@
         <div class="field">
           <label for="activePercent">当前 Active 份额</label>
           <div class="number-field"><input id="activePercent" name="activePercent" type="number" min="0.00000001" max="100" step="any" inputmode="decimal" value="70" required aria-describedby="active-hint activePercent-error"><span>%</span></div>
-          <p id="active-hint" class="field-hint">当前成交价附近，你占活跃流动性的份额。</p>
+          <p id="active-hint" class="field-hint">当前成交价附近，你占活跃流动性的份额。可手填，或在上方读取。</p>
           <p id="activePercent-error" class="field-error" hidden></p>
         </div>
         <div class="field">
@@ -100,7 +123,7 @@
         <div><h2>怎么算</h2><p>整笔新增年化 = 加仓前整体手续费 APR ×（1 − 加仓后 Active 份额）。</p><p>新增年手续费 = 追加本金 × 整笔新增年化。每天按年手续费 ÷ 365 折算，每小时再 ÷ 24。页面中的“再加一小笔”是加仓完成后的瞬时边际，通常比这次整笔追加的年化更低。</p><p>仅有本金和份额，无法推算手续费年化；还需要当前仓位的手续费 APR。追加 0 U 时没有整笔新增年化。</p></div>
       </div>
     </details>
-    <footer>所有计算在本机浏览器完成。输入不会上传，也不会保存。</footer>
+    <footer>年化计算在浏览器内完成，不保存输入。点击读取时，会向所选 RPC 发送仓位与池子的只读查询；节点服务商可看到查询。无需签名，不发送交易。</footer>
   </main>
   <noscript>请启用浏览器 JavaScript 以使用本地计算器。</noscript>
 </body>

@@ -1,4 +1,5 @@
 import { calculatePosition, incrementalAprAt, validateInputs } from './model.mjs';
+import { setupPositionImport } from './import-position.mjs';
 
 const keys = ['capital', 'activePercent', 'aprPercent', 'additional'];
 const fields = Object.fromEntries(keys.map(key => [key, document.getElementById(key)]));
@@ -135,6 +136,7 @@ function drawChart() {
 form.addEventListener('submit', event => event.preventDefault());
 form.addEventListener('input', event => {
   if (event.target === slider) return;
+  if (event.target === fields.activePercent) positionImport.manualEdit();
   hasEdited = true;
   update(event.target === fields.capital || event.target === fields.additional);
 });
@@ -147,6 +149,14 @@ slider.addEventListener('input', () => {
 });
 new ResizeObserver(drawChart).observe(chartContainer);
 update(true);
+const positionImport = setupPositionImport({
+  onRead(result, changedPosition) {
+    fields.activePercent.value = String(result.activePercent);
+    if (changedPosition) { fields.capital.value = ''; fields.aprPercent.value = ''; }
+    hasEdited = true; update(true);
+  },
+  onClear() { fields.activePercent.value = ''; hasEdited = true; update(); },
+});
 
 // Optional page-scoped tooling shares the same validation and visible state.
 const modelContext = document.modelContext;
@@ -170,6 +180,7 @@ if (modelContext?.registerTool) {
     annotations: { readOnlyHint: false, untrustedContentHint: false },
     execute(input) {
       const result = calculatePosition(input);
+      positionImport.manualEdit();
       for (const key of keys) fields[key].value = String(input[key]);
       hasEdited = true;
       update(true);

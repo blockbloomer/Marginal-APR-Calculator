@@ -8,15 +8,50 @@
 
 仓库附带 GitHub Pages 发布工作流。启用 Pages 的 GitHub Actions 发布来源后，每次推送 `main` 都会先测试、再构建和发布。
 
-页面不要求连接钱包或登录；所有计算在访问者的浏览器内完成，参数不会上传。
+页面不要求连接钱包或登录；年化计算在访问者的浏览器内完成。可以手填 Active，也可以读取链上仓位自动填写。
+
+## 自动读取 Active
+
+支持 BSC 的 PancakeSwap v3、Uniswap v3/v4，以及 Robinhood Chain 的 Uniswap v3/v4。选择平台并输入 NFT 编号，或直接粘贴仓位详情链接；可识别的链接会自动选择平台。这里的 Robinhood 链 ID 为 4663，不是 Ronin。
+
+读取只针对一个 NFT。本金与手续费 APR 仍需填写同一仓位的数据；换读另一个仓位时这两项会清空，防止误用示例或旧仓位参数。刷新同一仓位保留这两项，但应同时检查其是否仍准确。
+
+在同一区块读取仓位流动性 `L_position`、池子当前活跃流动性 `L_pool` 和当前 tick：
+
+```
+tickLower <= tick < tickUpper 时：Active = L_position / L_pool × 100%
+出区间时：Active = 0，暂停自动代入年化模型
+```
+
+Uniswap v4 使用完整 PoolKey 计算 poolId，从 StateView 读取池子状态。带自定义 Hook 的池子可读取份额，但手续费分配可能不同，暂不自动代入；Permissioned 仓位不支持。空仓位、销毁仓位、错误网络、过期区块、无效数据均显示错误，不沿用旧结果。
+
+这是按下按钮时的区块快照，不是持续实时监控。价格或其他 LP 改变后请再次读取；历史 APR 与当前份额组合也只产生静态估计。
+
+### 公共与自定义 RPC
+
+| 网络 | 默认节点 | 备用节点 |
+| --- | --- | --- |
+| BSC | `https://bsc-dataseed.bnbchain.org` | `https://bsc-dataseed-public.bnbchain.org` |
+| Robinhood | `https://rpc.mainnet.chain.robinhood.com` | `https://robinhood-rpc.publicnode.com` |
+
+公共节点失败时重新在备用节点读取整份快照，不混合区块。每个节点最多等待 10 秒；区块时间超过 5 分钟会拒绝。
+
+在「RPC 设置」中可以填自己的 HTTPS RPC。需支持所选链及浏览器跨域访问（CORS）；API Key 可以位于地址路径或查询参数中。自定义节点失败时不会自动向公共节点发送查询，点击「恢复公共 RPC」后再读取即可。
+
+自定义地址仅存在当前页面，不写入浏览器持久存储、分享链接或应用日志，刷新后清空。浏览器扩展、开发者工具及节点服务商仍可能看到地址与请求；不要在公共代码中硬编码私人节点凭据。RPC 服务商会看到仓位查询，页面不会将本金和 APR 发给 RPC。所有请求均为只读，不连接钱包、不签名、不发送交易。
+
+整个网站仍是纯前端，GitHub Pages 即可托管，无需自建服务器或数据库。
+
+官方依据：[BSC RPC](https://docs.bnbchain.org/bnb-smart-chain/developers/json_rpc/json-rpc-endpoint/)、[Robinhood 网络](https://docs.robinhood.com/chain/connecting/)、[PublicNode](https://robinhood.publicnode.com/)、[PancakeSwap v3 部署](https://developer.pancakeswap.finance/contracts/v3/addresses)、[Uniswap BSC v3 部署](https://developers.uniswap.org/docs/protocols/v3/deployments/v3-bnb-deployments)、[Uniswap Robinhood v3 部署](https://developers.uniswap.org/docs/protocols/v3/deployments/v3-robinhood-chain-deployments)、[Uniswap v4 部署](https://developers.uniswap.org/docs/protocols/v4/deployments)。
 
 ## 本地运行
 
-需要 Node.js 20 或更高版本，没有第三方依赖，无需安装 npm 包。
+需要 Node.js 20 或更高版本。viem 负责合约编码与解码，esbuild 将依赖打包进静态资源，无需运行时 CDN。
 
 ```bash
 git clone https://github.com/blockbloomer/Marginal-APR-Calculator.git
 cd Marginal-APR-Calculator
+npm ci
 npm run dev
 ```
 
@@ -29,7 +64,7 @@ npm run build
 npm start
 ```
 
-服务只监听本机 `127.0.0.1`。计算在浏览器完成，不连接钱包、不执行交易、不访问 RPC，不上传或保存输入。页面全部资源来自本地，运行期间无需网络。
+服务只监听本机 `127.0.0.1`。手动计算可离线使用；自动读取仓位需要联网访问所选 RPC。页面资源均随构建产物一起发布。
 
 ## 发布自己的网页
 
@@ -81,9 +116,12 @@ npm run build
 
 - `public/model.mjs`：独立数值模型与校验。
 - `public/app.mjs`：表单、滑块、图表与结果联动。
+- `public/positions.mjs`：平台配置、链接解析、同区块链上读取与 Active 计算。
+- `public/import-position.mjs`：查询状态、取消、自动填入和自定义 RPC 控件。
 - `public/index.html`、`public/styles.css`：本地页面与样式。
 - `tests/model.test.mjs`：数值、守恒、规模一致性与边界测试。
+- `tests/positions.test.mjs`：v3/v4 编解码、区间边界、RPC 主备、错误、隐私与超时测试。
 - `scripts/serve.mjs`：仅本地监听的静态服务。
-- `scripts/build.mjs`：检查 JavaScript 语法并复制资源到忽略的 `dist/`。
+- `scripts/build.mjs`：检查 JavaScript 语法并打包资源到忽略的 `dist/`。
 
 可选浏览器 WebMCP 功能以 feature detection 注册参数配置工具；不支持该接口的浏览器仍可使用全部页面功能。

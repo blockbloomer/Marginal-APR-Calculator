@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
+import { build } from 'esbuild';
 
 const root = fileURLToPath(new URL(process.argv.includes('--dist') ? '../dist/' : '../public/', import.meta.url));
 const port = Number(process.env.PORT || 5193);
@@ -20,7 +21,9 @@ const server = createServer(async (req, res) => {
   const file = files.get(pathname);
   if (!file) { res.writeHead(404); res.end('Not found'); return; }
   try {
-    const body = await readFile(resolve(root, file[0]));
+    const body = file[0] === 'app.mjs' && !process.argv.includes('--dist')
+      ? (await build({ entryPoints: [resolve(root, 'app.mjs')], bundle: true, format: 'esm', platform: 'browser', target: 'es2022', write: false })).outputFiles[0].contents
+      : await readFile(resolve(root, file[0]));
     res.writeHead(200, { 'Content-Type': file[1], 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer' });
     res.end(req.method === 'HEAD' ? undefined : body);
   } catch {
