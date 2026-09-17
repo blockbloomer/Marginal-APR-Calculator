@@ -21,4 +21,5 @@
 - Chrome 实际验证 BSC/Robinhood 自动填入、错误链自定义节点、地址刷新清空、出区间不估算；桌面与 390px 手机布局复核完成，finish review 为 ship，无待修项。
 - npm run check、npm run build、git diff --check 通过；公开文件敏感模式扫描未发现私人凭据、个人邮箱或本机路径。
 - 公共端点已检查 chainId、合约代码及允许 GitHub Pages Origin 的 CORS 响应。
-- 后续发布以当前提交的测试、构建、浏览器结果和 GitHub Actions 为准。
+- 功能提交 f3a7fa4 已发布；GitHub Actions 35186075059 的安装、测试、构建和部署全部成功。线上四个静态文件与本地构建逐字节一致。
+- 公开 Pages 链接中的 Robinhood 自动读取已实际成功；自定义节点成功路径也在浏览器验证。
